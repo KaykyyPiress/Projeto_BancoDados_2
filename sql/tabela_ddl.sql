@@ -1,4 +1,10 @@
 -- DDL para criação das tabelas do Sistema de Saúde tipo SUS
+DROP TABLE IF EXISTS Consulta CASCADE;
+DROP TABLE IF EXISTS Exame CASCADE;
+DROP TABLE IF EXISTS Unidade_Saude;
+DROP TABLE IF EXISTS Paciente;
+DROP TABLE IF EXISTS Profissional_Saude;
+
 
 CREATE TABLE Profissional_Saude (
     id_profissional   SERIAL PRIMARY KEY,

@@ -1,7 +1,7 @@
 import os
 import random
 from faker import Faker
-#from db_connection import get_connection  # se você quiser executar direto no banco
+from db_connection import get_connection  # se você quiser executar direto no banco
 
 fake = Faker('pt_BR')
 
@@ -94,28 +94,68 @@ def gerar_dml(
 
     return "\n".join(statements)
 
-def salvar_script(dml, path="sql/dml_saude.sql"):
-    os.makedirs(os.path.dirname(path), exist_ok=True)
-    with open(path, "w", encoding="utf-8") as f:
-        f.write(dml)
-    print(f"Script DML salvo em {path}")
+# def salvar_script(dml, path="sql/dml_saude.sql"):
+#     os.makedirs(os.path.dirname(path), exist_ok=True)
+#     with open(path, "w", encoding="utf-8") as f:
+#         f.write(dml)
+#     print(f"Script DML salvo em {path}")
 
-def executar_no_banco(path="sql/dml_saude.sql"):
-    """Se quiser rodar direto no banco via db_connection.get_connection()."""
-    conn = get_connection()
-    cur = conn.cursor()
-    with open(path, "r", encoding="utf-8") as f:
-        for comando in f.read().split(";"):
-            cmd = comando.strip()
-            if cmd:
-                cur.execute(cmd + ";")
-    conn.commit()
-    cur.close()
-    conn.close()
-    print("DML executado no banco com sucesso.")
+
+def execute_script_from_files():
+    """
+    Executa os scripts 'ddl_script.sql' e 'dml_script.sql' da raiz do projeto.
+    O DDL é executado primeiro, e só se ele for bem-sucedido o DML é executado.
+    """
+    ddl_path = "sql/tabela_ddl.sql"
+    dml_path = "sql/dml_saude.sql"
+
+    try:
+        with open(ddl_path, 'r', encoding='utf-8') as ddl_file:
+            ddl_script = ddl_file.read()
+        with open(dml_path, 'r', encoding='utf-8') as dml_file:
+            dml_script = dml_file.read()
+
+        conn = get_connection()
+        cur = conn.cursor()
+        print("Conectado ao Supabase com sucesso.")
+
+        # Executa DDL
+        if ddl_script:
+            print("Executando script DDL...")
+            for comando in ddl_script.split(";"):
+                comando = comando.strip()
+                if comando:
+                    cur.execute(comando + ";")
+            conn.commit()
+            print("Script DDL executado com sucesso.")
+
+        # Executa DML
+        if dml_script:
+            print("Executando script DML...")
+            for comando in dml_script.split(";"):
+                comando = comando.strip()
+                if comando:
+                    cur.execute(comando + ";")
+            conn.commit()
+            print("Script DML executado com sucesso.")
+
+        cur.close()
+        conn.close()
+        print("Todos os comandos foram executados com sucesso.")
+
+    except FileNotFoundError as fe:
+        print(f"Arquivo não encontrado: {fe.filename}")
+    except Exception as e:
+        print(f"Erro ao executar os comandos no Supabase: {e}")
 
 if __name__ == "__main__":
     dml = gerar_dml()
-    salvar_script(dml)
+
+    # Opcional: gravar o script em um arquivo
+    with open("sql/dml_saude.sql", "w", encoding='utf-8') as file:
+        file.write(dml)
+    print("Script DML gerado e salvo com sucesso!")
+
+
     # se quiser já executar:
-    # executar_no_banco()
+    execute_script_from_files()
