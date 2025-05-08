@@ -94,7 +94,7 @@ def gerar_dml(
 
     return "\n".join(statements)
 
-# def salvar_script(dml, path="sql/dml_saude.sql"):
+# def salvar_script(dml, path="sql/saude_dml.sql"):
 #     os.makedirs(os.path.dirname(path), exist_ok=True)
 #     with open(path, "w", encoding="utf-8") as f:
 #         f.write(dml)
