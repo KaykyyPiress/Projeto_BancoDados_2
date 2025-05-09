@@ -107,7 +107,7 @@ def execute_script_from_files():
     O DDL é executado primeiro, e só se ele for bem-sucedido o DML é executado.
     """
     ddl_path = "sql/tabela_ddl.sql"
-    dml_path = "sql/dml_saude.sql"
+    dml_path = "sql/dados_dml.sql"
 
     try:
         with open(ddl_path, 'r', encoding='utf-8') as ddl_file:
@@ -152,7 +152,7 @@ if __name__ == "__main__":
     dml = gerar_dml()
 
     # Opcional: gravar o script em um arquivo
-    with open("sql/dml_saude.sql", "w", encoding='utf-8') as file:
+    with open("sql/dados_dml.sql", "w", encoding='utf-8') as file:
         file.write(dml)
     print("Script DML gerado e salvo com sucesso!")
 
